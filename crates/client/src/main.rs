@@ -1,9 +1,9 @@
-use loom_core::Health;
+mod cli;
+mod config;
 
 fn main() {
-    let h = Health {
-        status: "from client".into(),
-    };
-
-    println!("{:?}", h);
+    if let Err(e) = cli::run() {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    }
 }
