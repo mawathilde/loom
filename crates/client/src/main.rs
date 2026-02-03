@@ -1,5 +1,6 @@
 mod cli;
 mod config;
+mod scanner;
 
 fn main() {
     if let Err(e) = cli::run() {

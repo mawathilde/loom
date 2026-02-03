@@ -1,3 +1,3 @@
-mod hash;
-mod manifest;
-mod transform;
+pub mod hash;
+pub mod manifest;
+pub mod transform;

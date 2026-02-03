@@ -1,6 +1,8 @@
 use crate::config;
+use crate::scanner::scan_game_dir;
 use clap::Parser;
 use dialoguer::{Input, Password};
+use serde_json::to_string_pretty;
 
 #[derive(Parser)]
 #[command(name = "loom")]
@@ -13,6 +15,7 @@ struct Cli {
 enum Commands {
     Init {},
     Games {},
+    Scan {},
 }
 
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
@@ -38,7 +41,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         Commands::Games {} => {
-            let config = config::load_config();
+            let config = config::get_config();
             match config {
                 Ok(cfg) => {
                     if cfg.games.is_empty() {
@@ -46,15 +49,27 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                     } else {
                         println!("Configured games:");
                         for game in cfg.games {
-                            println!("ID: {}, Path: {}", game.id, game.path);
+                            println!("ID: {}, Name: {}, Path: {}", game.id, game.name, game.path);
                         }
                     }
                 }
                 Err(e) => {
-                    eprintln!(
-                        "Please run 'loom init' to create a configuration file first. Error: {}",
-                        e
-                    );
+                    eprintln!("Error: {}", e);
+                }
+            }
+        }
+        Commands::Scan {} => {
+            let config = config::get_config();
+            match config {
+                Ok(cfg) => {
+                    for game in cfg.games {
+                        let path = std::path::Path::new(&game.path);
+                        let game_manifest = scan_game_dir(game.id.clone(), path);
+                        println!("{}", to_string_pretty(&game_manifest)?);
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Error: {}", e);
                 }
             }
         }

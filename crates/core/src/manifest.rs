@@ -1,3 +1,6 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FileEntry {
     pub path: String,
     pub hash: String,
@@ -5,6 +8,7 @@ pub struct FileEntry {
     pub size: u64,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GameManifest {
     pub game_id: String,
     pub device_id: String,
